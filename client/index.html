@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jitendra Kumar Mishra — Full Stack Developer</title>
+  <meta name="description" content="Full Stack Developer specializing in Node.js, Express.js, and MongoDB. Building scalable, production-ready web applications." />
+  <meta name="keywords" content="Full Stack Developer, Node.js, MongoDB, Express.js, JavaScript, Portfolio" />
+  <meta name="author" content="Jitendra Kumar Mishra" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Jitendra Kumar Mishra — Full Stack Developer" />
+  <meta property="og:description" content="Full Stack Developer specializing in Node.js, Express.js, and MongoDB." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Devicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>" />
+</head>
+<body>
+
+  <!-- ── Canvas Background ──────────────────────────────────────────────── -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- ── Aurora Orbs ────────────────────────────────────────────────────── -->
+  <div class="aurora-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ── Navigation ────────────────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo" aria-label="Home">
+        <span class="logo-bracket">&lt;</span>JKM<span class="logo-bracket">/&gt;</span>
+      </a>
+      <ul class="nav-links" id="navLinks" role="list">
+        <li><a href="#about" class="nav-link" id="nav-about">About</a></li>
+        <li><a href="#skills" class="nav-link" id="nav-skills">Skills</a></li>
+        <li><a href="#projects" class="nav-link" id="nav-projects">Projects</a></li>
+        <li><a href="#experience" class="nav-link" id="nav-experience">Experience</a></li>
+        <li><a href="#contact" class="nav-link" id="nav-contact">Contact</a></li>
+        <li><a href="/admin.html" class="nav-link nav-admin" id="nav-admin" target="_blank">Admin ↗</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ───────────────────────────────────────────────────── -->
+  <section class="hero" id="hero" aria-label="Hero">
+    <div class="hero-container">
+      <div class="hero-badge" id="heroBadge">
+        <span class="badge-dot"></span>
+        <span>Available for opportunities</span>
+      </div>
+      <h1 class="hero-title" id="heroTitle">
+        <span class="greeting">Hi, I'm</span>
+        <span class="hero-name">Jitendra Kumar<br />Mishra</span>
+      </h1>
+      <div class="hero-subtitle">
+        <span>I build </span>
+        <span class="typewriter" id="typewriter" aria-live="polite"></span>
+      </div>
+      <p class="hero-description">
+        Full Stack Developer crafting performant, scalable web applications.<br />
+        Passionate about clean code, great UX, and backend architecture.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary" id="hero-cta-projects">
+          <span>View My Work</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#contact" class="btn btn-outline" id="hero-cta-contact">Let's Talk</a>
+      </div>
+      <div class="hero-socials">
+        <a href="https://github.com/yourJITENDRA" target="_blank" rel="noopener noreferrer" class="social-link" id="social-github" aria-label="GitHub">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/jitendramis-hra/" target="_blank" rel="noopener noreferrer" class="social-link" id="social-linkedin" aria-label="LinkedIn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="mailto:jitendramishra223355@gmail.com" class="social-link" id="social-email" aria-label="Email">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <!-- ── About Section ──────────────────────────────────────────────────── -->
+  <section class="section about-section" id="about" aria-label="About">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">01 — About</span>
+        <h2 class="section-title">Who I Am</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-image-wrapper reveal">
+          <div class="about-image-frame">
+            <div class="about-avatar">
+              <!-- 
+                ── ADD YOUR PHOTO HERE ──────────────────────────────────
+                Option A (local file):
+                  1. Copy your photo to: client/assets/photo.jpg
+                  2. The src below already points there — just add the file!
+
+                Option B (online URL):
+                  Replace src with any direct image URL, e.g.:
+                  src="https://avatars.githubusercontent.com/yourJITENDRA"
+                ─────────────────────────────────────────────────────────
+              -->
+              <img
+                src="https://avatars.githubusercontent.com/u/181446810?v=4"
+                alt="Jitendra Kumar Mishra"
+                class="about-photo"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+              <span class="about-initials" style="display:none;">JKM</span>
+            </div>
+            <div class="about-image-decoration" aria-hidden="true">
+              <div class="deco-ring deco-ring-1"></div>
+              <div class="deco-ring deco-ring-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="about-content reveal">
+          <h3 class="about-heading">Full Stack Developer based in India 🇮🇳</h3>
+          <p class="about-text">
+            I'm a passionate Full Stack Developer with expertise in <strong>Node.js</strong>, <strong>Express.js</strong>, and <strong>MongoDB</strong>. I love building robust backend systems and intuitive user interfaces that solve real-world problems.
+          </p>
+          <p class="about-text">
+            My approach centers on writing clean, maintainable code and following best practices in software architecture. I'm always exploring new technologies and pushing my boundaries as a developer.
+          </p>
+          <div class="about-stats">
+            <div class="stat-card" id="stat-projects">
+              <span class="stat-number" data-target="10">0</span>
+              <span class="stat-label">Projects Built</span>
+            </div>
+            <div class="stat-card" id="stat-technologies">
+              <span class="stat-number" data-target="10">0</span>
+              <span class="stat-label">Technologies</span>
+            </div>
+            <div class="stat-card" id="stat-commits">
+              <span class="stat-number" data-target="30">0</span>
+              <span class="stat-label">GitHub Commits</span>
+            </div>
+          </div>
+          <a href="#contact" class="btn btn-primary" id="about-cta" style="width: fit-content;">
+            <span>Get In Touch</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Skills Section ─────────────────────────────────────────────────── -->
+  <section class="section skills-section" id="skills" aria-label="Skills">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">02 — Skills</span>
+        <h2 class="section-title">Technical Arsenal</h2>
+        <p class="section-subtitle">Technologies I work with to build exceptional products</p>
+      </div>
+
+      <div class="skills-categories reveal" id="skillsCategories">
+        <button class="skill-filter-btn active" data-filter="all" id="skill-filter-all">All</button>
+        <button class="skill-filter-btn" data-filter="backend" id="skill-filter-backend">Backend</button>
+        <button class="skill-filter-btn" data-filter="frontend" id="skill-filter-frontend">Frontend</button>
+        <button class="skill-filter-btn" data-filter="database" id="skill-filter-database">Database</button>
+        <button class="skill-filter-btn" data-filter="tools" id="skill-filter-tools">Tools</button>
+      </div>
+
+      <div class="skills-grid" id="skillsGrid" aria-live="polite">
+        <div class="loading-spinner" id="skillsLoader">
+          <div class="spinner"></div>
+          <span>Loading skills...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Projects Section ───────────────────────────────────────────────── -->
+  <section class="section projects-section" id="projects" aria-label="Projects">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">03 — Projects</span>
+        <h2 class="section-title">Things I've Built</h2>
+        <p class="section-subtitle">A collection of my work — from backend APIs to full-stack applications</p>
+      </div>
+
+      <div class="project-filters reveal" id="projectFilters" role="group" aria-label="Project filters">
+        <button class="filter-btn active" data-filter="all" id="proj-filter-all">All Projects</button>
+        <button class="filter-btn" data-filter="fullstack" id="proj-filter-fullstack">Full Stack</button>
+        <button class="filter-btn" data-filter="backend" id="proj-filter-backend">Backend</button>
+        <button class="filter-btn" data-filter="frontend" id="proj-filter-frontend">Frontend</button>
+      </div>
+
+      <div class="projects-grid" id="projectsGrid" aria-live="polite">
+        <div class="loading-spinner" id="projectsLoader">
+          <div class="spinner"></div>
+          <span>Loading projects...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Experience Section ─────────────────────────────────────────────── -->
+  <section class="section experience-section" id="experience" aria-label="Experience">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">04 — Experience</span>
+        <h2 class="section-title">My Journey</h2>
+      </div>
+      <div class="timeline" id="timeline">
+        <div class="timeline-item reveal" id="exp-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">2024 — Present</span>
+              <span class="timeline-badge">Active</span>
+            </div>
+            <h3 class="timeline-role">Full Stack Developer</h3>
+            <p class="timeline-company">Self-Employed / Freelance</p>
+            <p class="timeline-desc">Building and deploying full-stack web applications for clients. Specializing in Node.js backends, REST APIs, and MongoDB database design. Developed multiple production-grade systems including authentication systems and e-commerce backends.</p>
+            <div class="timeline-tags">
+              <span>Node.js</span><span>Express.js</span><span>MongoDB</span><span>REST API</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal" id="exp-2">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">2023 — 2024</span>
+            </div>
+            <h3 class="timeline-role">Backend Developer (Learning)</h3>
+            <p class="timeline-company">Self-Study / Open Source</p>
+            <p class="timeline-desc">Intensive self-study in backend development. Built 10+ projects including authentication systems, REST APIs, and database-driven applications. Contributed to open source repositories and participated in coding challenges.</p>
+            <div class="timeline-tags">
+              <span>JavaScript</span><span>Node.js</span><span>MySQL</span><span>Git</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal" id="exp-3">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">2022 — 2023</span>
+            </div>
+            <h3 class="timeline-role">Frontend Developer (Learning)</h3>
+            <p class="timeline-company">Self-Study</p>
+            <p class="timeline-desc">Started my development journey with HTML, CSS, and JavaScript. Built responsive websites and web apps, learned modern CSS (Flexbox, Grid), and began exploring JavaScript frameworks.</p>
+            <div class="timeline-tags">
+              <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Responsive Design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact Section ────────────────────────────────────────────────── -->
+  <section class="section contact-section" id="contact" aria-label="Contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">05 — Contact</span>
+        <h2 class="section-title">Let's Work Together</h2>
+        <p class="section-subtitle">Have a project in mind? I'd love to hear about it.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <h3 class="contact-heading">Get In Touch</h3>
+          <p class="contact-text">I'm currently available for freelance work and full-time opportunities. Whether you need a backend API, a full-stack application, or just want to say hi — my inbox is always open.</p>
+
+          <div class="contact-details">
+            <a href="mailto:jitendrakumarmishraa@gmail.com" class="contact-detail-item" id="contact-email-link">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <span class="contact-detail-label">Email</span>
+                <span class="contact-detail-value">jitendramishra223355@gmail.com</span>
+              </div>
+            </a>
+            <a href="https://github.com/yourJITENDRA" target="_blank" rel="noopener noreferrer" class="contact-detail-item" id="contact-github-link">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </div>
+              <div>
+                <span class="contact-detail-label">GitHub</span>
+                <span class="contact-detail-value">@yourJITENDRA</span>
+              </div>
+            </a>
+            <a href="https://www.linkedin.com/in/jitendramis-hra/" target="_blank" rel="noopener noreferrer" class="contact-detail-item" id="contact-linkedin-link">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </div>
+              <div>
+                <span class="contact-detail-label">LinkedIn</span>
+                <span class="contact-detail-value">Jitendra Kumar Mishra</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <form class="contact-form glass-card reveal" id="contactForm" novalidate>
+          <div class="form-group">
+            <label for="contact-name" class="form-label">Your Name</label>
+            <input type="text" id="contact-name" name="name" class="form-input" placeholder="John Doe" required autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="contact-email" class="form-label">Email Address</label>
+            <input type="email" id="contact-email" name="email" class="form-input" placeholder="john@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="contact-subject" class="form-label">Subject</label>
+            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Project inquiry" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-message" class="form-label">Message</label>
+            <textarea id="contact-message" name="message" class="form-input form-textarea" placeholder="Tell me about your project..." rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-full" id="contact-submit">
+            <span id="contact-btn-text">Send Message</span>
+            <svg id="contact-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+          <div class="form-status" id="formStatus" role="alert" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-content">
+        <a href="#hero" class="nav-logo" aria-label="Back to top">
+          <span class="logo-bracket">&lt;</span>JKM<span class="logo-bracket">/&gt;</span>
+        </a>
+        <p class="footer-text">Designed &amp; Built by <strong>Jitendra Kumar Mishra</strong> · <span id="footer-year"></span></p>
+        <div class="footer-socials">
+          <a href="https://github.com/yourJITENDRA" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/jitendramis-hra/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/animations.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
