@@ -5,6 +5,7 @@ const path = require('path');
 const projectRoutes = require('./routes/project.routes');
 const skillRoutes = require('./routes/skill.routes');
 const authRoutes = require('./routes/auth.routes');
+const resumeRoutes = require('./routes/resume.routes');
 
 const app = express();
 
@@ -19,10 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 // ── Serve Static Frontend ───────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'client')));
 
+// ── Serve Uploaded Files (resumes, etc.) ────────────────────────────────
+app.use('/uploads', express.static(path.join(__dirname, '..', 'client', 'uploads')));
+
 // ── API Routes ──────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
+app.use('/api/resume', resumeRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

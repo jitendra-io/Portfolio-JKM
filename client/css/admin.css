@@ -469,3 +469,127 @@
   .admin-item-actions { width: 100%; justify-content: flex-end; }
   .modal-overlay { padding: 16px; }
 }
+
+/* ── Resume Admin Panel ───────────────────────────────────────────────── */
+.resume-admin-card {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.resume-admin-subtitle {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.resume-admin-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* Current status box */
+.resume-status-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.resume-current-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.resume-file-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-indigo);
+  flex-shrink: 0;
+}
+
+.resume-file-name {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.resume-file-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.resume-no-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 8px;
+}
+
+/* Drag and drop zone */
+.resume-drop-zone {
+  border: 2px dashed rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-base);
+  background: rgba(99, 102, 241, 0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resume-drop-zone:hover,
+.resume-drop-zone.drag-over {
+  border-color: var(--accent-indigo);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.resume-drop-zone.has-file {
+  border-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.resume-drop-zone p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.resume-browse-label {
+  color: var(--accent-indigo);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.resume-browse-label:hover {
+  color: var(--accent-cyan);
+}
+
+.resume-upload-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 28px;
+}

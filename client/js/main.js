@@ -268,4 +268,67 @@ function observeNewReveals(elements) {
 (function init() {
   fetchSkills();
   fetchProjects();
+  fetchResume();
 })();
+
+// ═════════════════════════════════════════════════════════════════════
+// RESUME
+// ═════════════════════════════════════════════════════════════════════
+let currentResumeUrl = null;
+
+async function fetchResume() {
+  try {
+    const res  = await fetch(`${API_BASE}/api/resume`);
+    const json = await res.json();
+    if (json.success && json.data) {
+      currentResumeUrl = `${API_BASE}${json.data.url}`;
+      const btn = document.getElementById('view-resume-btn');
+      if (btn) btn.style.display = 'flex';
+      const nameEl = document.getElementById('resumeFileName');
+      if (nameEl) nameEl.textContent = json.data.originalName || 'Resume.pdf';
+      const dlBtn = document.getElementById('resumeDownloadBtn');
+      if (dlBtn) {
+        dlBtn.href = currentResumeUrl;
+        dlBtn.setAttribute('download', json.data.originalName || 'Resume.pdf');
+      }
+    }
+  } catch (err) {
+    console.warn('Resume API error:', err.message);
+  }
+}
+
+function openResumeModal() {
+  if (!currentResumeUrl) return;
+  const overlay = document.getElementById('resumeModalOverlay');
+  const iframe  = document.getElementById('resumeIframe');
+  if (overlay && iframe) {
+    iframe.src = currentResumeUrl;
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    // Animate in
+    requestAnimationFrame(() => overlay.classList.add('active'));
+  }
+}
+window.openResumeModal = openResumeModal;
+
+function closeResumeModal() {
+  const overlay = document.getElementById('resumeModalOverlay');
+  const iframe  = document.getElementById('resumeIframe');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      if (iframe) iframe.src = '';
+      document.body.style.overflow = '';
+    }, 300);
+  }
+}
+window.closeResumeModal = closeResumeModal;
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('resumeModalOverlay');
+    if (overlay && overlay.style.display !== 'none') closeResumeModal();
+  }
+});

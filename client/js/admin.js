@@ -94,7 +94,7 @@ function showLoginError(msg) {
 // DATA LOADING
 // ═════════════════════════════════════════════════════════════════════
 async function loadAll() {
-  await Promise.all([loadProjects(), loadSkills()]);
+  await Promise.all([loadProjects(), loadSkills(), loadResume()]);
   updateStats();
 }
 
@@ -515,3 +515,138 @@ function escapeHTML(str) {
 // INIT
 // ═════════════════════════════════════════════════════════════════════
 checkAuth();
+
+// ═════════════════════════════════════════════════════════════════════
+// RESUME MANAGEMENT
+// ═════════════════════════════════════════════════════════════════════
+let selectedResumeFile = null;
+
+// Load resume status when dashboard loads
+async function loadResume() {
+  const statusEl = document.getElementById('resumeStatus');
+  const deleteBtn = document.getElementById('deleteResumeBtn');
+  if (!statusEl) return;
+
+  try {
+    const res = await apiFetch('/api/resume');
+    if (res.success && res.data) {
+      const uploadedDate = new Date(res.data.uploadedAt).toLocaleDateString('en-IN', {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+      statusEl.innerHTML = `
+        <div class="resume-current-info">
+          <div class="resume-file-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <div class="resume-file-name">${escapeHTML(res.data.originalName)}</div>
+            <div class="resume-file-meta">Uploaded: ${uploadedDate}</div>
+          </div>
+          <a href="${API_BASE}${res.data.url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding:8px 16px;font-size:0.8rem;margin-left:auto;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </a>
+        </div>
+      `;
+      if (deleteBtn) deleteBtn.style.display = 'flex';
+    } else {
+      statusEl.innerHTML = `<div class="resume-no-file"><span>⚠️</span> No resume uploaded yet.</div>`;
+      if (deleteBtn) deleteBtn.style.display = 'none';
+    }
+  } catch (err) {
+    statusEl.innerHTML = `<div class="resume-no-file"><span>❌</span> Error loading resume info.</div>`;
+  }
+}
+
+// File input / drag-and-drop
+document.addEventListener('DOMContentLoaded', () => {
+  const dropZone       = document.getElementById('resumeDropZone');
+  const fileInput      = document.getElementById('resumeFileInput');
+  const uploadBtn      = document.getElementById('uploadResumeBtn');
+  const deleteBtn      = document.getElementById('deleteResumeBtn');
+  const selectedName   = document.getElementById('selectedFileName');
+  const uploadStatus   = document.getElementById('resumeUploadStatus');
+
+  function setSelectedFile(file) {
+    if (!file || file.type !== 'application/pdf') {
+      showToast('Please select a valid PDF file.', 'error');
+      return;
+    }
+    selectedResumeFile = file;
+    if (selectedName) selectedName.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+    if (uploadBtn) uploadBtn.disabled = false;
+    if (dropZone) dropZone.classList.add('has-file');
+  }
+
+  fileInput?.addEventListener('change', e => {
+    if (e.target.files[0]) setSelectedFile(e.target.files[0]);
+  });
+
+  dropZone?.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone?.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) setSelectedFile(e.dataTransfer.files[0]);
+  });
+  dropZone?.addEventListener('click', () => fileInput?.click());
+
+  uploadBtn?.addEventListener('click', async () => {
+    if (!selectedResumeFile) return;
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Uploading...';
+
+    const formData = new FormData();
+    formData.append('resume', selectedResumeFile);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/resume`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('Resume uploaded successfully! ✅', 'success');
+        selectedResumeFile = null;
+        if (selectedName) selectedName.textContent = '';
+        if (fileInput) fileInput.value = '';
+        if (dropZone) dropZone.classList.remove('has-file');
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Resume`;
+        await loadResume();
+      } else {
+        showToast(json.message || 'Upload failed.', 'error');
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Resume`;
+      }
+    } catch (err) {
+      showToast('Upload error: ' + err.message, 'error');
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = `Upload Resume`;
+    }
+  });
+
+  deleteBtn?.addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to remove the current resume?')) return;
+    try {
+      const res = await apiFetch('/api/resume', 'DELETE');
+      if (res.success) {
+        showToast('Resume removed.', 'success');
+        await loadResume();
+      } else {
+        showToast(res.message || 'Delete failed.', 'error');
+      }
+    } catch (err) {
+      showToast('Delete error: ' + err.message, 'error');
+    }
+  });
+});

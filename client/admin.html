@@ -94,6 +94,7 @@
       <div class="admin-tabs">
         <button class="admin-tab active" data-tab="projects" id="tab-projects">📁 Projects</button>
         <button class="admin-tab" data-tab="skills" id="tab-skills">⚡ Skills</button>
+        <button class="admin-tab" data-tab="resume" id="tab-resume">📄 Resume</button>
       </div>
 
       <!-- ── Projects Tab ─────────────────────────────────────────── -->
@@ -121,6 +122,49 @@
 
         <div id="skillsList" class="admin-list">
           <div class="loading-spinner"><div class="spinner"></div><span>Loading...</span></div>
+        </div>
+      </div>
+
+      <!-- ── Resume Tab ────────────────────────────── -->
+      <div class="tab-panel" id="panel-resume">
+        <div class="panel-header">
+          <h2 class="panel-title">Resume</h2>
+        </div>
+
+        <div class="resume-admin-card glass-card">
+          <!-- Current Resume Status -->
+          <div id="resumeCurrentSection">
+            <h3 class="resume-admin-subtitle">Current Resume</h3>
+            <div id="resumeStatus" class="resume-status-box">
+              <div class="loading-spinner"><div class="spinner"></div><span>Loading...</span></div>
+            </div>
+          </div>
+
+          <!-- Upload New Resume -->
+          <div class="resume-upload-section">
+            <h3 class="resume-admin-subtitle">Upload / Replace Resume</h3>
+            <p class="resume-admin-hint">Only PDF files are accepted. Maximum size: 10 MB. Uploading a new file replaces the existing one.</p>
+            <div class="resume-drop-zone" id="resumeDropZone">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--accent-indigo);margin-bottom:12px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p id="dropZoneText">Drag & drop your PDF here, or <label for="resumeFileInput" class="resume-browse-label">browse</label></p>
+              <input type="file" id="resumeFileInput" accept=".pdf,application/pdf" style="display:none;" />
+              <p id="selectedFileName" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-cyan);margin-top:8px;"></p>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:12px;">
+              <button class="btn btn-primary" id="uploadResumeBtn" disabled style="padding:10px 24px;font-size:0.875rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload Resume
+              </button>
+              <button class="btn btn-outline" id="deleteResumeBtn" style="padding:10px 24px;font-size:0.875rem;display:none;color:#ef4444;border-color:rgba(239,68,68,0.3);">
+                🗑 Remove Resume
+              </button>
+            </div>
+            <div id="resumeUploadStatus" class="form-status" style="margin-top:12px;"></div>
+          </div>
         </div>
       </div>
 
