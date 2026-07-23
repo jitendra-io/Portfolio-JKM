@@ -1,5 +1,5 @@
 const Message            = require('../models/Message');
-const { getTransporter } = require('../config/mailer');
+const { sendEmail } = require('../config/mailer');
 
 // ── POST /api/messages — public, submit a contact message ───────────────────
 exports.createMessage = async (req, res, next) => {
@@ -80,16 +80,8 @@ exports.replyToMessage = async (req, res, next) => {
     const doc = await Message.findById(req.params.id);
     if (!doc) return res.status(404).json({ success: false, message: 'Message not found.' });
 
-    const mailer    = getTransporter();
     const fromName  = process.env.GMAIL_FROM_NAME || 'Jitendra Kumar Mishra';
-    const fromEmail = process.env.GMAIL_USER;
-
-    if (!mailer) {
-      return res.status(503).json({
-        success: false,
-        message: 'Email is not configured on the server. Please set GMAIL_USER and GMAIL_APP_PASSWORD in environment variables.',
-      });
-    }
+    const fromEmail = process.env.GMAIL_USER || 'jitendramishra223355@gmail.com';
 
     // ── Build a clean HTML email ──────────────────────────────────────────────
     const replyBodyHtml = replyBody.trim().replace(/\n/g, '<br>');
@@ -141,17 +133,16 @@ exports.replyToMessage = async (req, res, next) => {
 </body>
 </html>`;
 
-    // Send email via Gmail SMTP with forced IPv4
-    await mailer.sendMail({
-      from:    `"${fromName}" <${fromEmail}>`,
-      to:      `"${doc.name}" <${doc.email}>`,
-      replyTo: fromEmail,
+    // Send email via Brevo HTTP REST API
+    await sendEmail({
+      toEmail: doc.email,
+      toName:  doc.name,
       subject: `Re: ${doc.subject}`,
       html,
       text: replyBody.trim(),
     });
 
-    // ── Persist reply + mark as read ─────────────────────────────────────────
+    // Save reply to database
     doc.replies.push({ body: replyBody.trim(), sentFrom: fromEmail });
     doc.read = true;
     await doc.save();
