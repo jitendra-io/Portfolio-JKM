@@ -95,6 +95,10 @@
         <button class="admin-tab active" data-tab="projects" id="tab-projects">📁 Projects</button>
         <button class="admin-tab" data-tab="skills" id="tab-skills">⚡ Skills</button>
         <button class="admin-tab" data-tab="resume" id="tab-resume">📄 Resume</button>
+        <button class="admin-tab" data-tab="messages" id="tab-messages">
+          ✉️ Messages
+          <span class="msg-badge" id="msgUnreadBadge" style="display:none">0</span>
+        </button>
       </div>
 
       <!-- ── Projects Tab ─────────────────────────────────────────── -->
@@ -165,6 +169,17 @@
             </div>
             <div id="resumeUploadStatus" class="form-status" style="margin-top:12px;"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Messages Tab ─────────────────────────────────────────── -->
+      <div class="tab-panel" id="panel-messages">
+        <div class="panel-header">
+          <h2 class="panel-title">Messages</h2>
+          <button class="btn btn-outline" id="markAllReadBtn" style="padding: 10px 22px; font-size:0.875rem;">Mark All Read</button>
+        </div>
+        <div id="messagesList" class="admin-list">
+          <div class="loading-spinner"><div class="spinner"></div><span>Loading...</span></div>
         </div>
       </div>
 

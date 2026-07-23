@@ -593,3 +593,65 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 28px;
 }
+
+/* ── Messages Tab ─────────────────────────────────────────────────────── */
+.msg-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent-cyan, #06b6d4);
+  color: #0a0a0f;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 6px;
+  line-height: 1;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(6, 182, 212, 0); }
+}
+
+.msg-unread {
+  border-left: 3px solid var(--accent-cyan, #06b6d4) !important;
+  background: rgba(6, 182, 212, 0.04) !important;
+}
+
+.msg-item {
+  transition: background 0.2s ease;
+  padding: 0 !important; /* override admin-item default padding */
+}
+
+/* ── Reply panel ── */
+.reply-panel {
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+.reply-textarea {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: var(--text-primary) !important;
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  min-height: 100px;
+}
+
+.reply-textarea:focus {
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+  outline: none !important;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+

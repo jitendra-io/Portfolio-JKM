@@ -218,16 +218,32 @@ contactForm?.addEventListener('submit', async (e) => {
     return;
   }
 
-  // Simulate sending (replace with EmailJS or backend endpoint)
-  contactBtnText.textContent = 'Sending...';
-  document.getElementById('contact-submit').disabled = true;
+  // ── Real API call ──────────────────────────────────────────────────────────
+  const submitBtn = document.getElementById('contact-submit');
+  contactBtnText.textContent = 'Sending…';
+  submitBtn.disabled = true;
 
-  await new Promise(r => setTimeout(r, 1200)); // Simulate network request
+  try {
+    const res  = await fetch(`${API_BASE}/api/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, subject, message }),
+    });
+    const json = await res.json();
 
-  showFormStatus(`Thanks ${name}! Your message has been received. I'll get back to you soon. 🚀`, 'success');
-  contactForm.reset();
-  contactBtnText.textContent = 'Send Message';
-  document.getElementById('contact-submit').disabled = false;
+    if (res.ok && json.success) {
+      showFormStatus(`Thanks ${escapeHTML(name)}! Your message has been received. I'll get back to you soon. 🚀`, 'success');
+      contactForm.reset();
+    } else {
+      showFormStatus(json.message || 'Something went wrong. Please try again.', 'error');
+    }
+  } catch (err) {
+    showFormStatus('Network error — please check your connection and try again.', 'error');
+    console.error('Contact form error:', err);
+  } finally {
+    contactBtnText.textContent = 'Send Message';
+    submitBtn.disabled = false;
+  }
 });
 
 function showFormStatus(msg, type) {

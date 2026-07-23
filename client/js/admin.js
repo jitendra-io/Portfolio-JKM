@@ -94,9 +94,18 @@ function showLoginError(msg) {
 // DATA LOADING
 // ═════════════════════════════════════════════════════════════════════
 async function loadAll() {
-  await Promise.all([loadProjects(), loadSkills(), loadResume()]);
+  await Promise.all([loadProjects(), loadSkills(), loadResume(), loadUnreadCount()]);
   updateStats();
 }
+
+async function loadUnreadCount() {
+  try {
+    const res = await apiFetch('/api/messages');
+    messages = res.data || [];
+    updateUnreadBadge(res.unreadCount || 0);
+  } catch { /* silent fail */ }
+}
+
 
 async function loadProjects() {
   try {
@@ -650,3 +659,247 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// ═════════════════════════════════════════════════════════════════════
+// MESSAGES TAB
+// ═════════════════════════════════════════════════════════════════════
+let messages = [];
+
+async function loadMessages() {
+  const el = document.getElementById('messagesList');
+  if (!el) return;
+  el.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading...</span></div>';
+  try {
+    const res = await apiFetch('/api/messages');
+    messages = res.data || [];
+    updateUnreadBadge(res.unreadCount || 0);
+    renderMessagesList();
+  } catch (err) {
+    el.innerHTML = `<p style="color:var(--text-muted);padding:20px;">Error loading messages: ${err.message}</p>`;
+  }
+}
+
+function updateUnreadBadge(count) {
+  const badge = document.getElementById('msgUnreadBadge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderMessagesList() {
+  const el = document.getElementById('messagesList');
+  if (!el) return;
+  if (!messages.length) {
+    el.innerHTML = '<div class="empty-state"><h3>No messages yet</h3><p>Messages from the contact form will appear here.</p></div>';
+    return;
+  }
+
+  el.innerHTML = messages.map(m => `
+    <div class="admin-item msg-item ${m.read ? '' : 'msg-unread'}" id="msg-item-${m._id}" style="flex-direction:column;align-items:stretch;gap:0;">
+
+      <!-- ── Header row ── -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;">
+        <div class="admin-item-info" style="flex:1;min-width:0;">
+          <div class="admin-item-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            ${m.read ? '' : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent-cyan);flex-shrink:0;" title="Unread"></span>'}
+            <strong>${escapeHTML(m.name)}</strong>
+            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">&lt;${escapeHTML(m.email)}&gt;</span>
+          </div>
+          <div class="admin-item-meta" style="margin-top:4px;">
+            <span style="color:var(--text-primary);font-weight:600;">${escapeHTML(m.subject)}</span>
+            <span style="color:var(--text-muted);"> · ${formatDate(m.createdAt)}</span>
+          </div>
+        </div>
+        <div class="admin-item-actions" style="flex-shrink:0;align-items:center;">
+          <button class="btn btn-primary" onclick="toggleReplyPanel('${m._id}')" style="padding:7px 16px;font-size:0.8rem;display:inline-flex;align-items:center;gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+            Reply
+          </button>
+          ${!m.read ? `<button class="btn btn-outline" onclick="markMsgRead('${m._id}')" style="padding:7px 14px;font-size:0.8rem;" title="Mark as read">✓ Read</button>` : ''}
+          <button class="btn btn-outline" onclick="deleteMsg('${m._id}')" style="padding:7px 14px;font-size:0.8rem;color:#ef4444;border-color:rgba(239,68,68,0.3);" title="Delete">🗑</button>
+        </div>
+      </div>
+
+      <!-- ── Original message body ── -->
+      <div style="padding:0 18px 14px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px 16px;font-size:0.875rem;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;">${escapeHTML(m.message)}</div>
+      </div>
+
+      <!-- ── Reply history ── -->
+      ${m.replies && m.replies.length ? `
+        <div style="padding:0 18px 14px;">
+          <p style="font-size:0.72rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Sent Replies (${m.replies.length})</p>
+          ${m.replies.map(r => `
+            <div style="display:flex;gap:10px;margin-bottom:10px;">
+              <div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--gradient-main);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:#fff;font-weight:700;">J</div>
+              <div style="flex:1;">
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;">${formatDate(r.sentAt)}</div>
+                <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:0 10px 10px 10px;padding:10px 14px;font-size:0.875rem;line-height:1.65;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;">${escapeHTML(r.body)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- ── Reply compose panel (hidden by default) ── -->
+      <div id="reply-panel-${m._id}" class="reply-panel" style="display:none;">
+        <div style="padding:14px 18px 18px;border-top:1px solid rgba(255,255,255,0.07);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-indigo)" stroke-width="2.5"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary);">Replying to ${escapeHTML(m.name)} &lt;${escapeHTML(m.email)}&gt;</span>
+          </div>
+          <textarea
+            id="reply-textarea-${m._id}"
+            class="form-input reply-textarea"
+            placeholder="Type your reply here…"
+            rows="5"
+            style="width:100%;resize:vertical;font-family:var(--font-body);font-size:0.875rem;line-height:1.65;box-sizing:border-box;"
+          ></textarea>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;justify-content:flex-end;">
+            <button class="btn btn-outline" onclick="toggleReplyPanel('${m._id}')" style="padding:8px 18px;font-size:0.83rem;">Cancel</button>
+            <button class="btn btn-primary" id="reply-send-btn-${m._id}" onclick="sendReply('${m._id}')" style="padding:8px 22px;font-size:0.83rem;display:inline-flex;align-items:center;gap:7px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send Reply
+            </button>
+          </div>
+          <div id="reply-status-${m._id}" style="font-size:0.8rem;margin-top:8px;text-align:right;min-height:18px;"></div>
+        </div>
+      </div>
+
+    </div>
+  `).join('');
+}
+
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+async function markMsgRead(id) {
+  try {
+    const res = await apiFetch(`/api/messages/${id}/read`, 'PATCH');
+    if (res.success) {
+      const idx = messages.findIndex(m => m._id === id);
+      if (idx !== -1) messages[idx].read = true;
+      const unread = messages.filter(m => !m.read).length;
+      updateUnreadBadge(unread);
+      renderMessagesList();
+    } else {
+      showToast(res.message || 'Failed to mark as read.', 'error');
+    }
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+window.markMsgRead = markMsgRead;
+
+async function deleteMsg(id) {
+  if (!confirm('Delete this message? This cannot be undone.')) return;
+  try {
+    const res = await apiFetch(`/api/messages/${id}`, 'DELETE');
+    if (res.success) {
+      messages = messages.filter(m => m._id !== id);
+      const unread = messages.filter(m => !m.read).length;
+      updateUnreadBadge(unread);
+      renderMessagesList();
+      showToast('Message deleted.', 'success');
+    } else {
+      showToast(res.message || 'Delete failed.', 'error');
+    }
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+window.deleteMsg = deleteMsg;
+
+// ── Toggle reply compose panel ────────────────────────────────────────────────
+function toggleReplyPanel(id) {
+  const panel = document.getElementById(`reply-panel-${id}`);
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    // Smooth slide-in
+    panel.style.opacity = '0';
+    panel.style.transform = 'translateY(-8px)';
+    panel.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    requestAnimationFrame(() => {
+      panel.style.opacity = '1';
+      panel.style.transform = 'translateY(0)';
+    });
+    setTimeout(() => document.getElementById(`reply-textarea-${id}`)?.focus(), 100);
+  }
+}
+window.toggleReplyPanel = toggleReplyPanel;
+
+// ── Send reply email ──────────────────────────────────────────────────────────
+async function sendReply(id) {
+  const textarea  = document.getElementById(`reply-textarea-${id}`);
+  const sendBtn   = document.getElementById(`reply-send-btn-${id}`);
+  const statusEl  = document.getElementById(`reply-status-${id}`);
+  const replyBody = textarea?.value?.trim();
+
+  if (!replyBody) {
+    if (statusEl) { statusEl.textContent = '⚠ Please type a reply first.'; statusEl.style.color = '#f59e0b'; }
+    return;
+  }
+
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Sending…`;
+  if (statusEl) { statusEl.textContent = ''; }
+
+  try {
+    const res = await apiFetch(`/api/messages/${id}/reply`, 'POST', { replyBody });
+
+    if (res.success) {
+      if (statusEl) { statusEl.textContent = '✅ Reply sent!'; statusEl.style.color = '#22c55e'; }
+      textarea.value = '';
+
+      // Update local state with the returned doc (includes new reply)
+      const idx = messages.findIndex(m => m._id === id);
+      if (idx !== -1 && res.data) {
+        messages[idx] = res.data;
+      }
+
+      // Close panel and re-render after a brief success moment
+      setTimeout(() => {
+        const unread = messages.filter(m => !m.read).length;
+        updateUnreadBadge(unread);
+        renderMessagesList();
+        showToast(`Reply sent to ${res.data?.email || 'sender'} ✉️`, 'success');
+      }, 800);
+    } else {
+      if (statusEl) { statusEl.textContent = `❌ ${res.message || 'Failed to send.'}`; statusEl.style.color = '#ef4444'; }
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Reply`;
+    }
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = `❌ Network error: ${err.message}`; statusEl.style.color = '#ef4444'; }
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Reply`;
+  }
+}
+window.sendReply = sendReply;
+
+// Mark all as read
+document.getElementById('markAllReadBtn')?.addEventListener('click', async () => {
+  const unread = messages.filter(m => !m.read);
+  if (!unread.length) { showToast('No unread messages.', 'success'); return; }
+  await Promise.all(unread.map(m => apiFetch(`/api/messages/${m._id}/read`, 'PATCH')));
+  messages.forEach(m => { m.read = true; });
+  updateUnreadBadge(0);
+  renderMessagesList();
+  showToast('All messages marked as read. ✅', 'success');
+});
+
+// Load messages when Messages tab is clicked
+document.getElementById('tab-messages')?.addEventListener('click', () => {
+  loadMessages();
+});
+
+
