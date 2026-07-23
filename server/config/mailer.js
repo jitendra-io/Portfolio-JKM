@@ -1,10 +1,6 @@
 const nodemailer = require('nodemailer');
 
-let transporter = null;
-
 function getTransporter() {
-  if (transporter) return transporter;
-
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
 
@@ -13,12 +9,19 @@ function getTransporter() {
     return null;
   }
 
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass },
+  const transporter = nodemailer.createTransport({
+    host:   'smtp.gmail.com',  // explicit host (avoids IPv6 DNS resolution)
+    port:   587,               // STARTTLS — works on Render
+    secure: false,             // upgrade via STARTTLS, not SSL
+    family: 4,                 // ← force IPv4; fixes ENETUNREACH on Render
+    auth:   { user, pass },
+    tls: {
+      rejectUnauthorized: true,
+    },
   });
 
   return transporter;
 }
 
 module.exports = { getTransporter };
+
