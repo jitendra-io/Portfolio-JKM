@@ -1,5 +1,5 @@
 const Message            = require('../models/Message');
-const { getResendClient } = require('../config/mailer');
+const { getTransporter } = require('../config/mailer');
 
 // ── POST /api/messages — public, submit a contact message ───────────────────
 exports.createMessage = async (req, res, next) => {
@@ -80,16 +80,14 @@ exports.replyToMessage = async (req, res, next) => {
     const doc = await Message.findById(req.params.id);
     if (!doc) return res.status(404).json({ success: false, message: 'Message not found.' });
 
-    const resend    = getResendClient();
+    const mailer    = getTransporter();
     const fromName  = process.env.GMAIL_FROM_NAME || 'Jitendra Kumar Mishra';
-    // Resend requires a verified domain — use onboarding@resend.dev for testing,
-    // or your own verified domain email in production
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+    const fromEmail = process.env.GMAIL_USER;
 
-    if (!resend) {
+    if (!mailer) {
       return res.status(503).json({
         success: false,
-        message: 'Email is not configured on the server. Please set RESEND_API_KEY in environment variables.',
+        message: 'Email is not configured on the server. Please set GMAIL_USER and GMAIL_APP_PASSWORD in environment variables.',
       });
     }
 
@@ -143,20 +141,15 @@ exports.replyToMessage = async (req, res, next) => {
 </body>
 </html>`;
 
-    // ── Send via Resend HTTP API (works on Render — no SMTP ports needed) ──────
-    const { error } = await resend.emails.send({
-      from:     `${fromName} <${fromEmail}>`,
-      to:       [doc.email],
-      reply_to: process.env.GMAIL_USER || fromEmail,
-      subject:  `Re: ${doc.subject}`,
+    // Send email via Gmail SMTP with forced IPv4
+    await mailer.sendMail({
+      from:    `"${fromName}" <${fromEmail}>`,
+      to:      `"${doc.name}" <${doc.email}>`,
+      replyTo: fromEmail,
+      subject: `Re: ${doc.subject}`,
       html,
       text: replyBody.trim(),
     });
-
-    if (error) {
-      console.error('Resend error:', error);
-      return res.status(502).json({ success: false, message: `Email delivery failed: ${error.message}` });
-    }
 
     // ── Persist reply + mark as read ─────────────────────────────────────────
     doc.replies.push({ body: replyBody.trim(), sentFrom: fromEmail });

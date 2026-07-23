@@ -1,14 +1,25 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
+const dns = require('dns');
 
-// Resend uses HTTP (not SMTP), so it works on Render free tier
-// Sign up at https://resend.com — free tier: 3,000 emails/month
-function getResendClient() {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || apiKey === 'your_resend_api_key') {
-    console.warn('⚠️  Resend API key not configured — set RESEND_API_KEY in environment.');
+function getTransporter() {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+
+  if (!user || !pass || user === 'your_gmail@gmail.com') {
+    console.warn('⚠️  Gmail credentials not configured.');
     return null;
   }
-  return new Resend(apiKey);
+
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // SSL
+    auth: { user, pass },
+    // Force IPv4 resolution to prevent ENETUNREACH IPv6 errors on Render
+    lookup: (hostname, options, callback) => {
+      dns.lookup(hostname, { family: 4 }, callback);
+    },
+  });
 }
 
-module.exports = { getResendClient };
+module.exports = { getTransporter };
