@@ -468,6 +468,30 @@
   .admin-item { flex-wrap: wrap; }
   .admin-item-actions { width: 100%; justify-content: flex-end; }
   .modal-overlay { padding: 16px; }
+
+  /* Tab responsiveness */
+  .admin-tabs {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+  }
+  .admin-tab {
+    flex: 1 1 calc(50% - 8px);
+    text-align: center;
+    padding: 10px;
+  }
+
+  /* Resume card responsiveness */
+  .resume-admin-card {
+    padding: 16px;
+  }
+  .resume-current-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .resume-drop-zone {
+    padding: 24px 16px;
+  }
 }
 
 /* ── Resume Admin Panel ───────────────────────────────────────────────── */
